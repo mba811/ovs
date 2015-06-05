@@ -32,7 +32,9 @@
 #include <net/if.h>
 #include <net/if_dl.h>
 #include <net/if_media.h>
+#ifndef __APPLE__
 #include <net/if_tap.h>
+#endif
 #include <netinet/in.h>
 #ifdef HAVE_NET_IF_MIB_H
 #include <net/if_mib.h>
@@ -300,6 +302,7 @@ netdev_bsd_construct_system(struct netdev *netdev_)
     return 0;
 }
 
+#ifndef __APPLE__
 static int
 netdev_bsd_construct_tap(struct netdev *netdev_)
 {
@@ -378,6 +381,7 @@ error:
     free(kernel_name);
     return error;
 }
+#endif /* __APPLE__ */
 
 static void
 netdev_bsd_destruct(struct netdev *netdev_)
@@ -975,7 +979,7 @@ convert_stats(const struct netdev *netdev, struct netdev_stats *stats,
 static int
 netdev_bsd_get_stats(const struct netdev *netdev_, struct netdev_stats *stats)
 {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
     int if_count, i;
     int mib[6];
     size_t len;
@@ -1618,11 +1622,13 @@ const struct netdev_class netdev_bsd_class =
         netdev_bsd_construct_system,
         netdev_bsd_get_features);
 
+#ifndef __APPLE__
 const struct netdev_class netdev_tap_class =
     NETDEV_BSD_CLASS(
         "tap",
         netdev_bsd_construct_tap,
         netdev_bsd_get_features);
+#endif
 
 
 static void
@@ -1713,7 +1719,7 @@ set_etheraddr(const char *netdev_name OVS_UNUSED, int hwaddr_family OVS_UNUSED,
               int hwaddr_len OVS_UNUSED,
               const uint8_t mac[ETH_ADDR_LEN] OVS_UNUSED)
 {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || (__APPLE__)
     struct ifreq ifr;
     int error;
 

@@ -148,6 +148,9 @@ netdev_initialize(void)
         netdev_register_provider(&netdev_tap_class);
         netdev_register_provider(&netdev_bsd_class);
 #endif
+#if defined(__APPLE__)
+        netdev_register_provider(&netdev_bsd_class);
+#endif
 #ifdef _WIN32
         netdev_register_provider(&netdev_windows_class);
         netdev_register_provider(&netdev_internal_class);

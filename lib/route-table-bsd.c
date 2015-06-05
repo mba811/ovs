@@ -162,6 +162,14 @@ retry:
             sa = (struct sockaddr *)((char *)sa + SA_SIZE(sa));
 #elif defined(__NetBSD__)
             sa = (struct sockaddr *)((char *)sa + RT_ROUNDUP(sa->sa_len));
+#elif defined(__APPLE__)
+#ifndef SA_SIZE
+# define SA_SIZE(sa)                        \
+    (  (!(sa) || ((struct sockaddr *)(sa))->sa_len == 0) ?  \
+       sizeof(long)     :               \
+       1 + ( (((struct sockaddr *)(sa))->sa_len - 1) | (sizeof(long) - 1) ) )
+#endif /* SA_SIZE */
+            sa = (struct sockaddr *)((char *)sa + SA_SIZE(sa));
 #else
 #error unimplemented
 #endif

@@ -735,7 +735,7 @@ struct netdev_class {
 int netdev_register_provider(const struct netdev_class *);
 int netdev_unregister_provider(const char *type);
 
-#if defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__)
 extern const struct netdev_class netdev_bsd_class;
 #elif defined(_WIN32)
 extern const struct netdev_class netdev_windows_class;
